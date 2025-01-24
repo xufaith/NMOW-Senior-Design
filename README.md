@@ -5,7 +5,7 @@ Spring 2025 - Gwinnett Neighborhood Meals on Wheels GT Senior Design Team
 # to check the branches
 git branch -v
 # to create a local branch
-git checkout -b <branch-name>
+### git checkout -b <branch-name>
 
-# making a small change
-
+# get changes from remote into local branch
+### git pull origin test_local
