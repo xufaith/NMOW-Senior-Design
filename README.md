@@ -7,3 +7,5 @@ git branch -v
 # to create a local branch
 git checkout -b <branch-name>
 
+# making a small change
+
