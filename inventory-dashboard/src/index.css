@@ -1,0 +1,181 @@
+/* Global Styling */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8f9fa;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #002F5F; /* Dark Blue from Meals on Wheels */
+  color: white;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+/* Tabs Container */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 0;
+  background-color: transparent;
+  margin-top: 10px; /* Ensure tabs are visible */
+}
+
+/* Tab Button */
+.tab-button {
+  background: #0076C0; /* Bright Blue */
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 10px 25px;
+  border-radius: 6px;
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Active Tab */
+.tab-button.active {
+  background-color: #00B050; /* Green for active tab */
+  color: white;
+}
+
+/* Hover Effect */
+.tab-button:hover {
+  background-color: #005F9E;
+}
+
+/* Search and Export Section */
+.search-export-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5px;
+}
+
+/* Search Bar */
+.search-bar input {
+  width: 320px; /* Increased width */
+  padding: 10px;
+  font-size: 15px;
+  border-radius: 8px; /* Rounded input */
+  border: 1px solid #ccc;
+}
+
+/* Export Button - Smaller and Moved All the Way to the Right */
+.export-container {
+  display: flex;
+  justify-content: flex-end; /* Align to the right */
+  padding-right: 20px;
+  margin-bottom: 10px;
+}
+
+.export-btn {
+  background-color: #00B050;
+  color: white;
+  font-weight: bold;
+  border-radius: 6px; /* Make it slightly smaller */
+  padding: 8px 10px; /* Reduce padding to make it smaller */
+  font-size: 12px; /* Reduce font size */
+  border: none;
+  cursor: pointer;
+}
+
+.export-btn:hover {
+  background-color: #00843D;
+}
+
+/* Filter Container */
+.filter-container {
+  display: flex;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 8px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Headers */
+th {
+  font-weight: bold;
+  text-align: left;
+  padding: 14px;
+  background-color: #002F5F;
+  color: white;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Table Rows */
+tr {
+  transition: background-color 0.2s ease-in-out;
+}
+
+tr:hover {
+  background-color: #e3f2fd;
+}
+
+/* Table Cells */
+td {
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Button Styling */
+button {
+  transition: all 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
+  padding: 6px 12px;
+  font-weight: bold;
+}
+
+button:hover {
+  opacity: 0.9;
+  transform: scale(1.03);
+}
+
+/* Green Action Buttons */
+.button {
+  background-color: #00B050;
+  color: white;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.button:hover {
+  background-color: #00843D;
+}
+
+/* Dropdown Styling */
+select {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 14px;
+  background-color: white;
+  cursor: pointer;
+}
+
+.red-row {
+  background-color: #ffcccc !important; /* Light red */
+  color: #900; /* Dark red text */
+}
+
+.yellow-row {
+  background-color: #fff3cd !important; /* Light yellow */
+  color: #856404; /* Dark yellow text */
+}
