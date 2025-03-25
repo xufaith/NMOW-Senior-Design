@@ -97,39 +97,51 @@ def update_ingredient(barcode: str, ingredient: dict):
         return {"message": "Ingredient updated successfully"}
     raise HTTPException(status_code=404, detail="Failed to update ingredient")
 
-
 @app.patch("/increase/{barcode}")
 def increase_stock(barcode: str, stock_update: StockUpdate):
-    barcode = barcode.strip()  # Ensure no spaces in barcode
-    ingredient = supabase.table("ingredients").select("*").eq("barcode", barcode).execute()
-
-    print(f"DEBUG: Looking for barcode {barcode}, Found: {ingredient.data}")  # Log query result
-
+    """ Increase stock in Supabase and log response """
+    ingredient = supabase.table("ingredients").select("num_containers").eq("barcode", barcode).execute()
+    
     if not ingredient.data:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 
-    current_quantity = ingredient.data[0]["num_containers"]
-    new_quantity = current_quantity + stock_update.amount
-    response = supabase.table("ingredients").update({"num_containers": new_quantity}).eq("barcode", barcode).execute()
+    current_quantity = int(ingredient.data[0]["num_containers"])
+    new_quantity = current_quantity + int(stock_update.amount)
 
-    return {"message": "Stock increased", "data": response.data}
+    response = supabase.table("ingredients").update({"num_containers": new_quantity}).eq("barcode", barcode).execute()
+    
+    print(f"🔹 DEBUG: Increased stock for {barcode}. New quantity: {new_quantity}")
+    print(f"🔹 DEBUG: Supabase response: {response}")
+
+    if response.data:
+        return {"message": "Stock increased successfully", "new_quantity": new_quantity}
+    
+    raise HTTPException(status_code=500, detail="Failed to update stock")
 
 @app.patch("/decrease/{barcode}")
 def decrease_stock(barcode: str, stock_update: StockUpdate):
-    """ Decrease stock by a given amount """
+    """ Decrease stock in Supabase and log response """
     ingredient = supabase.table("ingredients").select("num_containers").eq("barcode", barcode).execute()
-
+    
     if not ingredient.data:
         raise HTTPException(status_code=404, detail="Ingredient not found")
 
-    current_quantity = ingredient.data[0]["num_containers"]
+    current_quantity = int(ingredient.data[0]["num_containers"])
     if current_quantity < stock_update.amount:
         raise HTTPException(status_code=400, detail="Not enough stock to decrease")
 
-    new_quantity = current_quantity - stock_update.amount
-    response = supabase.table("ingredients").update({"num_containers": new_quantity}).eq("barcode", barcode).execute()
+    new_quantity = current_quantity - int(stock_update.amount)
 
-    return {"message": "Stock decreased", "data": response.data}
+    response = supabase.table("ingredients").update({"num_containers": new_quantity}).eq("barcode", barcode).execute()
+    
+    print(f"🔹 DEBUG: Decreased stock for {barcode}. New quantity: {new_quantity}")
+    print(f"🔹 DEBUG: Supabase response: {response}")
+
+    if response.data:
+        return {"message": "Stock decreased successfully", "new_quantity": new_quantity}
+    
+    raise HTTPException(status_code=500, detail="Failed to update stock")
+
 
 from fastapi.responses import StreamingResponse
 import csv

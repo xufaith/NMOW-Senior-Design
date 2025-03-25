@@ -1,0 +1,82 @@
+.menu-sub-container {
+    padding: 20px;
+}
+
+.menu-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.day-column {
+    width: 13%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+.meal-section {
+    margin-top: 10px;
+}
+
+.meal-section select {
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.check-feasibility {
+    background-color: #007bff; /* Bootstrap primary blue */
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .check-feasibility:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+
+.substitution-section {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}
+
+
+.menu-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+  
+  .day-column {
+    flex: 1;
+    min-width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin: 10px;
+    background: #f9f9f9;
+  }
+  
+  .ingredient-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  select {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 10px;
+  }
+  
+  

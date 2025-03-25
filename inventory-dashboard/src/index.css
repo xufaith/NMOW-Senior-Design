@@ -98,6 +98,7 @@ body {
   display: flex;
   gap: 15px;
   margin: 20px 0;
+  width: 25%;
 }
 
 /* Table Styling */
