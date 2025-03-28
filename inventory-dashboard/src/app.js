@@ -7,6 +7,7 @@ import SearchBar from "./components/SearchBar";
 import IngredientDetails from "./components/IngredientDetails";
 import MenuSubstitutions from "./components/MenuSubstitutions";  // ✅ Import new component
 import AddIngredient from "./components/AddIngredient";
+import AddIngredientButton from "./components/AddIngredientButton"; // Add this import at the top!
 import axios from "axios";
 import "./index.css";
 
@@ -101,7 +102,7 @@ function AppContent() {
             path="/"
             element={
               <>
-                <AddIngredient />
+                <AddIngredientButton />
                 <IngredientList 
                   searchQuery={searchQuery} 
                   ingredients={ingredients} 

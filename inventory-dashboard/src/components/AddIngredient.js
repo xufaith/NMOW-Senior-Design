@@ -8,8 +8,8 @@ const AddIngredient = () => {
   const [formData, setFormData] = useState({
     barcode: "",
     ingredient_name: "",
-    num_containers: 1,
-    units_per_container: 1,
+    num_containers: "",
+    units_per_container: "",
     unit: "Servings",
     expiration_date: "",
     storage_location: "",

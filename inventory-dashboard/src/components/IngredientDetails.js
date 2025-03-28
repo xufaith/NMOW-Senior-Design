@@ -3,10 +3,10 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const IngredientDetails = () => {
-  const { barcode } = useParams(); // Get barcode from URL
-  const navigate = useNavigate(); // Navigation function
-  const [formData, setFormData] = useState(null); // State to hold ingredient details
-  const [loading, setLoading] = useState(true); // Loading state
+  const { barcode } = useParams();
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchIngredient = async () => {
@@ -24,14 +24,18 @@ const IngredientDetails = () => {
   }, [barcode]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleSave = async () => {
     try {
       await axios.put(`http://127.0.0.1:8000/update-ingredient/${barcode}`, formData);
       alert("Ingredient updated successfully!");
-      navigate("/"); // Redirect back to main page
+      navigate("/");
     } catch (error) {
       console.error("Error updating ingredient:", error);
       alert("Failed to update ingredient");
@@ -72,12 +76,19 @@ const IngredientDetails = () => {
         <label> Brand:
           <input type="text" name="brand" value={formData.brand} onChange={handleChange} />
         </label>
-        <label> TEFAP:
-          <select name="tefap" value={formData.tefap} onChange={handleChange}>
-            <option value={true}>Yes</option>
-            <option value={false}>No</option>
-          </select>
+
+        {/* ✅ TEFAP Checkbox */}
+        <label className="flex items-center">
+          <input
+            name="tefap"
+            type="checkbox"
+            checked={formData.tefap === true || formData.tefap === "true"}
+            onChange={handleChange}
+            className="mr-2"
+          />
+          TEFAP
         </label>
+
         <div className="button-group">
           <button type="button" onClick={handleSave} className="save-button">Save</button>
           <button type="button" onClick={() => navigate("/")} className="cancel-button">Cancel</button>
@@ -88,3 +99,4 @@ const IngredientDetails = () => {
 };
 
 export default IngredientDetails;
+ 
