@@ -31,7 +31,14 @@ const AddIngredient = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://127.0.0.1:8000/add", formData);
+      // ✅ Explicitly convert numeric values before sending to backend
+      const dataToSend = {
+        ...formData,
+        num_containers: parseInt(formData.num_containers, 10),
+        units_per_container: parseFloat(formData.units_per_container),
+      };
+
+      await axios.post("http://127.0.0.1:8000/add", dataToSend);
       alert("Ingredient added successfully!");
       navigate("/");
     } catch (error) {

@@ -50,7 +50,7 @@ def add_ingredient(ingredient: Ingredient):
         if ingredient.expiration_date:
             from datetime import datetime
             try:
-                datetime.strptime(ingredient.expiration_date, "%Y-%m-%d")  # Ensure correct format
+                datetime.strptime(ingredient.expiration_date, "%Y-%m-%d")
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
 
@@ -62,7 +62,8 @@ def add_ingredient(ingredient: Ingredient):
         raise HTTPException(status_code=500, detail="Supabase error: Could not insert ingredient.")
 
     except Exception as e:
-        return HTTPException(status_code=500, detail=f"Database Constraint Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Database Constraint Error: {str(e)}")  # ✅ FIXED CLEARLY
+
 
 @app.delete("/remove/{barcode}")
 def remove_ingredient(barcode: str):
