@@ -2,6 +2,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
 from supabase import create_client, Client
+import uuid
+from fastapi import Body
+
 
 # Supabase credentials
 supabase_url = "https://atmafjrxijoqjphoclzo.supabase.co"
@@ -43,26 +46,33 @@ class StockUpdate(BaseModel):
 def read_root():
     return {"message": "Welcome to the Inventory API"}
 
+import uuid
+
 @app.post("/add")
 def add_ingredient(ingredient: Ingredient):
     try:
-        # Ensure expiration_date is in correct format
-        if ingredient.expiration_date:
+        # ✅ Generate a unique barcode
+        generated_barcode = str(uuid.uuid4().int)[:12]  # 12-digit unique number
+        ingredient_dict = ingredient.dict()
+        ingredient_dict["barcode"] = generated_barcode
+
+        # ✅ Format expiration_date if present
+        if ingredient_dict.get("expiration_date"):
             from datetime import datetime
             try:
-                datetime.strptime(ingredient.expiration_date, "%Y-%m-%d")
+                datetime.strptime(ingredient_dict["expiration_date"], "%Y-%m-%d")
             except ValueError:
                 raise HTTPException(status_code=400, detail="Invalid date format. Use YYYY-MM-DD")
 
-        response = supabase.table("ingredients").insert(ingredient.dict()).execute()
+        response = supabase.table("ingredients").insert(ingredient_dict).execute()
 
         if response.data:
             return {"message": "Ingredient added successfully", "data": response.data}
-        
+
         raise HTTPException(status_code=500, detail="Supabase error: Could not insert ingredient.")
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database Constraint Error: {str(e)}")  # ✅ FIXED CLEARLY
+        raise HTTPException(status_code=500, detail=f"Database Constraint Error: {str(e)}")
 
 
 @app.delete("/remove/{barcode}")
@@ -165,3 +175,87 @@ def export_csv():
 
     output.seek(0)
     return StreamingResponse(output, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=ingredients.csv"})
+
+from typing import Dict, Optional
+from pydantic import BaseModel
+from fastapi import HTTPException
+
+class DailyMealInput(BaseModel):
+    protein: Optional[str] = None
+    hot_side_1: Optional[str] = None
+    hot_side_2: Optional[str] = None
+    sauce_hot: Optional[str] = None
+    dessert_snack: Optional[str] = None
+    fruit_salad: Optional[str] = None
+    fruit_snack: Optional[str] = None
+    sauce_cold: Optional[str] = None
+
+class MenuRequest(BaseModel):
+    menu: Dict[str, Dict[str, DailyMealInput]]
+    meals_per_day: Dict[str, int]
+
+@app.post("/check_feasibility")
+def check_feasibility(request: MenuRequest):
+    try:
+        ingredients = supabase.table("ingredients").select("*").execute().data
+        if not ingredients:
+            raise HTTPException(status_code=404, detail="No ingredients found")
+
+        results = {}
+        for day, trays in request.menu.items():
+            results[day] = {}
+            meals_needed = request.meals_per_day.get(day, 0)
+
+            for tray_type, selection in trays.items():
+                tray_results = {}
+                for field, selected in selection.dict().items():
+                    if not selected:
+                        tray_results[field] = {"status": "missing", "message": "No ingredient selected"}
+                        continue
+
+                    matches = [i for i in ingredients if i["ingredient_name"] == selected]
+                    if not matches:
+                        tray_results[field] = {"status": "not_found", "message": f"{selected} not in DB"}
+                        continue
+
+                    ing = matches[0]
+                    servings = ing["units_per_container"] * ing["num_containers"]
+                    sufficient = servings >= meals_needed
+
+                    if sufficient:
+                        tray_results[field] = {
+                            "status": "sufficient",
+                            "servings_available": servings,
+                            "needed": meals_needed
+                        }
+                    else:
+                        subs = sorted(
+                            [
+                                i for i in ingredients
+                                if i["item_category"] == ing["item_category"]
+                                and i["storage_type"] == ing["storage_type"]
+                                and i["ingredient_name"] != ing["ingredient_name"]
+                            ],
+                            key=lambda x: x.get("expiration_date") or "9999-12-31"
+                        )
+
+                        tray_results[field] = {
+                            "status": "insufficient",
+                            "servings_available": servings,
+                            "needed": meals_needed,
+                            "substitutions": [
+                                {
+                                    "ingredient_name": sub["ingredient_name"],
+                                    "servings": sub["units_per_container"] * sub["num_containers"],
+                                    "expires": sub.get("expiration_date")
+                                }
+                                for sub in subs
+                            ]
+                        }
+
+                results[day][tray_type] = tray_results
+
+        return {"status": "complete", "results": results}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

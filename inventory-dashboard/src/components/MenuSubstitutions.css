@@ -1,82 +1,89 @@
 .menu-sub-container {
-    padding: 20px;
+  padding: 20px;
 }
 
-.menu-grid {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
+.menu-container {
+  display: flex;
+  flex-wrap: nowrap; /* prevent wrapping */
+  overflow-x: auto; /* allow horizontal scroll if needed */
+  gap: 10px;
+  padding-bottom: 10px;
 }
 
 .day-column {
-    width: 13%;
-    border: 1px solid #ccc;
-    padding: 10px;
-    text-align: center;
+  flex: 0 0 18%; /* Each column gets ~18% width to fit 5 in a row */
+  min-width: 220px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
 }
 
-.meal-section {
-    margin-top: 10px;
-}
 
-.meal-section select {
-    width: 100%;
-    padding: 5px;
-    margin-top: 5px;
+.select-field {
+  margin-bottom: 12px;
 }
 
 .check-feasibility {
-    background-color: #007bff; /* Bootstrap primary blue */
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s ease;
-  }
-  
-  .check-feasibility:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-  }
-  
-
-.substitution-section {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-top: 20px;
+}
+.check-feasibility:hover {
+  background-color: #0056b3;
 }
 
+.substitutions-section {
+  margin-top: 30px;
+}
 
-.menu-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-  }
-  
-  .day-column {
-    flex: 1;
-    min-width: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    margin: 10px;
-    background: #f9f9f9;
-  }
-  
-  .ingredient-search {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  select {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-  }
-  
-  
+.tray-card {
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+}
+
+.tray-field {
+  margin-bottom: 10px;
+}
+
+.status-icon {
+  margin-right: 6px;
+}
+
+.suggestion-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.suggestion-table th, .suggestion-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.toggle-btn {
+  margin-top: 6px;
+  background-color: #f0f0f0;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.toggle-btn:hover {
+  background-color: #e0e0e0;
+}

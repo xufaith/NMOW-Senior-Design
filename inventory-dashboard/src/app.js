@@ -11,6 +11,7 @@ import AddIngredientButton from "./components/AddIngredientButton"; // Add this 
 import axios from "axios";
 import "./index.css";
 
+
 const queryClient = new QueryClient();
 
 function AppContent() {

@@ -101,6 +101,14 @@ body {
   width: 25%;
 }
 
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 250px;
+  width: 50%;
+}
+
 /* Table Styling */
 table {
   width: 100%;
