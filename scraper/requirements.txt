@@ -1,5 +1,0 @@
-pandas
-beautifulsoup4
-supabase
-selenium
-chromedriver-py
