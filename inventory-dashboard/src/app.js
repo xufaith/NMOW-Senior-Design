@@ -1,16 +1,23 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import IngredientList from "./components/IngredientList";
-import ExpirationPage from "./components/ExpirationPage"; 
+import ExpirationPage from "./components/ExpirationPage";
 import SearchBar from "./components/SearchBar";
 import IngredientDetails from "./components/IngredientDetails";
-import MenuSubstitutions from "./components/MenuSubstitutions";  // ✅ Import new component
+import MenuSubstitutions from "./components/MenuSubstitutions";
 import AddIngredient from "./components/AddIngredient";
-import AddIngredientButton from "./components/AddIngredientButton"; // Add this import at the top!
+import AddIngredientButton from "./components/AddIngredientButton";
+import GroceryListPage from "./components/GroceryListPage"; // ✅ NEW
+
 import axios from "axios";
 import "./index.css";
-
 
 const queryClient = new QueryClient();
 
@@ -21,7 +28,6 @@ function AppContent() {
   const navigate = useNavigate();
   const [ingredients, setIngredients] = useState([]);
 
-  // ✅ Fetch ingredients from backend
   const fetchIngredients = useCallback(async () => {
     try {
       const response = await axios.get("http://127.0.0.1:8000/ingredients");
@@ -46,6 +52,8 @@ function AppContent() {
       setActiveTab("expiration");
     } else if (location.pathname === "/menu-sub") {
       setActiveTab("menu-sub");
+    } else if (location.pathname === "/grocery") {
+      setActiveTab("grocery");
     } else {
       setActiveTab("inventory");
     }
@@ -60,7 +68,7 @@ function AppContent() {
 
     for (let row of rows) {
       let cols = row.querySelectorAll("th, td");
-      let rowData = Array.from(cols).map(col => col.innerText.trim());
+      let rowData = Array.from(cols).map((col) => col.innerText.trim());
       csv.push(rowData.join(","));
     }
 
@@ -88,6 +96,9 @@ function AppContent() {
         <button className={`tab-button ${activeTab === "menu-sub" ? "active" : ""}`} onClick={() => navigate("/menu-sub")}>
           Menu Sub
         </button>
+        <button className={`tab-button ${activeTab === "grocery" ? "active" : ""}`} onClick={() => navigate("/grocery")}>
+          Grocery List
+        </button>
       </div>
 
       {/* Search and Export */}
@@ -104,16 +115,17 @@ function AppContent() {
             element={
               <>
                 <AddIngredientButton />
-                <IngredientList 
-                  searchQuery={searchQuery} 
-                  ingredients={ingredients} 
-                  fetchIngredients={fetchIngredients}  // ✅ Ensure updates reflect immediately
+                <IngredientList
+                  searchQuery={searchQuery}
+                  ingredients={ingredients}
+                  fetchIngredients={fetchIngredients}
                 />
               </>
             }
           />
           <Route path="/expiration" element={<ExpirationPage />} />
-          <Route path="/menu-sub" element={<MenuSubstitutions />} />  {/* ✅ New route for menu subs */}
+          <Route path="/menu-sub" element={<MenuSubstitutions />} />
+          <Route path="/grocery" element={<GroceryListPage />} /> {/* ✅ NEW ROUTE */}
           <Route path="/ingredient/:barcode" element={<IngredientDetails />} />
           <Route path="/add-ingredient" element={<AddIngredient />} />
         </Routes>
@@ -122,7 +134,6 @@ function AppContent() {
   );
 }
 
-// Wrap AppContent in BrowserRouter
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -132,7 +143,5 @@ function App() {
     </QueryClientProvider>
   );
 }
-
-
 
 export default App;
