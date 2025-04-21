@@ -15,6 +15,8 @@ import MenuSubstitutions from "./components/MenuSubstitutions";
 import AddIngredient from "./components/AddIngredient";
 import AddIngredientButton from "./components/AddIngredientButton";
 import GroceryListPage from "./components/GroceryListPage"; // ✅ NEW
+import AddLocationButton from "./components/AddLocationButton"; // ✅ Add this
+
 
 import axios from "axios";
 import "./index.css";
@@ -114,7 +116,10 @@ function AppContent() {
             path="/"
             element={
               <>
-                <AddIngredientButton />
+                <div className="flex items-center gap-4">
+                  <AddIngredientButton />
+                  <AddLocationButton /> {/* ✅ New button! */}
+                </div>
                 <IngredientList
                   searchQuery={searchQuery}
                   ingredients={ingredients}

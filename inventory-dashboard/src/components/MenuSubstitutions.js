@@ -77,7 +77,7 @@ const SuggestionTable = ({ suggestions, fieldId, selectedSuggestions, handleSugg
   </table>
 );
 
-const MenuSubstitutions = () => {
+const MenuSubstitutions = ({ setGroceryList }) => {
   const [menu, setMenu] = useState({});
   const [mealsPerDay, setMealsPerDay] = useState({});
   const [ingredients, setIngredients] = useState([]);
@@ -85,7 +85,6 @@ const MenuSubstitutions = () => {
   const [expanded, setExpanded] = useState({});
   const [selectedSuggestions, setSelectedSuggestions] = useState({});
   const [finalOutput, setFinalOutput] = useState({});
-  const [groceryList, setGroceryList] = useState([]);
 
   useEffect(() => {
     const fetchIngredients = async () => {
@@ -101,7 +100,8 @@ const MenuSubstitutions = () => {
     fetchIngredients();
   }, []);
 
-  const calculateServings = (item) => Math.round(item.num_containers * (item.units_per_container || 1));
+  const calculateServings = (item) =>
+    Math.round(item.num_containers * (item.units_per_container || 1));
 
   const handleSelect = (day, mealType, field, selectedOption) => {
     setMenu((prev) => ({
@@ -177,7 +177,9 @@ const MenuSubstitutions = () => {
         selected_substitutions: selectedSuggestions,
       });
       setFinalOutput(res.data.final_output_menu || {});
-      setGroceryList(res.data.grocery_list || []);
+      if (setGroceryList) {
+        setGroceryList(res.data.grocery_list || []);
+      }
     } catch (err) {
       console.error("Error finalizing menu:", err);
     }
@@ -186,6 +188,7 @@ const MenuSubstitutions = () => {
   return (
     <div className="menu-sub-container">
       <h2>Menu Substitutions</h2>
+
       <div className="menu-container">
         {weekdays.map((day) => (
           <div key={day} className="day-column">
@@ -307,28 +310,6 @@ const MenuSubstitutions = () => {
               </div>
             ) : null
           )}
-        </div>
-      )}
-
-      {groceryList.length > 0 && (
-        <div className="grocery-list">
-          <h3>Grocery List</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Item</th>
-                <th>Qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              {groceryList.map((g, idx) => (
-                <tr key={idx}>
-                  <td>{g.item}</td>
-                  <td>{g.qty}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       )}
     </div>

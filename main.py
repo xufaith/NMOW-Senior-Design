@@ -1,3 +1,6 @@
+print("🚀 USING CORRECT MAIN.PY bruh")
+print("✅ Running main.py with /locations route!")
+
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import Optional
@@ -298,6 +301,16 @@ class FinalizePayload(BaseModel):
     meals_per_day: Dict[str, int]
     selected_substitutions: Dict[str, Dict[str, Union[int, dict]]]
 
+from fastapi import HTTPException
+from pydantic import BaseModel
+from typing import Dict, List, Union
+import math
+
+class FinalizePayload(BaseModel):
+    menu: Dict[str, Dict[str, Dict[str, str]]]
+    meals_per_day: Dict[str, int]
+    selected_substitutions: Dict[str, Dict[str, Union[int, dict]]]
+
 @app.post("/finalize_menu")
 def finalize_menu(data: FinalizePayload):
     try:
@@ -341,32 +354,43 @@ def finalize_menu(data: FinalizePayload):
                     selected_ing = inventory_lookup.get(selected_name.strip().lower())
 
                     if selected_ing:
-                        servings = calculate_servings(selected_ing)
-                        containers_needed = math.ceil(meals / selected_ing["units_per_container"])
-                        output_menu[day][tray_type].append({
-                            "field": field_name,
-                            "item": selected_ing["ingredient_name"],
-                            "brand": selected_ing.get("brand", ""),
-                            "servings_needed": meals,
-                            "containers": containers_needed,
-                            "container_type": selected_ing.get("container_type", "?"),
-                            "location": selected_ing.get("storage_location", "?")
-                        })
+                        servings_available = calculate_servings(selected_ing)
+                        servings_needed = meals
+                        containers_needed = math.ceil(servings_needed / selected_ing["units_per_container"])
+
+                        if servings_available >= servings_needed:
+                            output_menu[day][tray_type].append({
+                                "field": field_name,
+                                "item": selected_ing["ingredient_name"],
+                                "brand": selected_ing.get("brand", ""),
+                                "servings_needed": servings_needed,
+                                "containers": containers_needed,
+                                "container_type": selected_ing.get("container_type", "?"),
+                                "location": selected_ing.get("storage_location", "?")
+                            })
+                        else:
+                            servings_short = servings_needed - servings_available
+                            containers_short = math.ceil(servings_short / selected_ing["units_per_container"])
+                            grocery_list.append({
+                                "item": selected_ing["ingredient_name"],
+                                "brand": selected_ing.get("brand", ""),
+                                "qty": f"{containers_short} {selected_ing.get('container_type', '?')} / {servings_short:.1f} serv."
+                            })
                     else:
-                        # If ingredient not found in inventory, add to grocery list
                         grocery_list.append({
                             "item": selected_name,
+                            "brand": "",
                             "qty": f"? containers / {meals} serv."
                         })
-                        print(f"🔴 Adding {selected_name} to grocery list")
 
         print("🛒 Grocery List:", grocery_list)
 
-        # ✅ Clear previous grocery list and insert updated values
         supabase.table("grocery_list").delete().neq("id", 0).execute()
         if grocery_list:
             supabase.table("grocery_list").insert(grocery_list).execute()
             print("✅ Inserted grocery list into Supabase.")
+        else:
+            print("⚠️ Skipped insert — grocery_list is empty.")
 
         return {
             "final_output_menu": output_menu,
@@ -385,3 +409,33 @@ def get_grocery_list():
         return {"grocery_list": response.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/locations")
+def get_locations():
+    print("📦 /locations endpoint hit")
+    try:
+        response = supabase.table("locations").select("*").execute()
+        return response.data
+        print("📦 /locations endpoint hit")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+
+class StorageLocationInput(BaseModel):
+    shelf_location: str
+    storage_type: str
+    zone: str
+
+@app.post("/add-location")
+def add_storage_location(data: StorageLocationInput):
+    try:
+        supabase.table("locations").insert({
+            "shelf_location": data.shelf_location,
+            "storage_type": data.storage_type,
+            "zone": data.zone
+        }).execute()
+        return {"message": "Location added successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+

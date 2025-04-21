@@ -7,6 +7,7 @@ const IngredientDetails = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const fetchIngredient = async () => {
@@ -42,12 +43,33 @@ const IngredientDetails = () => {
     }
   };
 
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this ingredient?");
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`http://127.0.0.1:8000/remove/${barcode}`);
+      setSuccessMessage("✅ Ingredient successfully deleted.");
+      setTimeout(() => navigate("/"), 2000); // Redirect after 2s
+    } catch (error) {
+      console.error("Error deleting ingredient:", error);
+      alert("Failed to delete ingredient");
+    }
+  };
+
   if (loading) return <p>Loading...</p>;
   if (!formData) return <p>Error: Ingredient not found</p>;
 
   return (
     <div className="container">
       <h2>Edit Ingredient</h2>
+
+      {successMessage && (
+        <div className="success-alert" style={{ color: "green", marginBottom: "10px" }}>
+          {successMessage}
+        </div>
+      )}
+
       <form className="ingredient-form">
         <label> Name:
           <input type="text" name="ingredient_name" value={formData.ingredient_name} onChange={handleChange} />
@@ -77,7 +99,6 @@ const IngredientDetails = () => {
           <input type="text" name="brand" value={formData.brand} onChange={handleChange} />
         </label>
 
-        {/* ✅ TEFAP Checkbox */}
         <label className="flex items-center">
           <input
             name="tefap"
@@ -92,6 +113,14 @@ const IngredientDetails = () => {
         <div className="button-group">
           <button type="button" onClick={handleSave} className="save-button">Save</button>
           <button type="button" onClick={() => navigate("/")} className="cancel-button">Cancel</button>
+          <button
+            type="button"
+            onClick={handleDelete}
+            className="delete-button"
+            style={{ backgroundColor: "#ff4d4f", color: "white", marginLeft: "10px" }}
+          >
+            Delete
+          </button>
         </div>
       </form>
     </div>
@@ -99,4 +128,3 @@ const IngredientDetails = () => {
 };
 
 export default IngredientDetails;
- 

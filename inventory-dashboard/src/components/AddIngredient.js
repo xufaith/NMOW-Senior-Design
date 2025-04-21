@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -19,6 +19,8 @@ const AddIngredient = () => {
     tefap: false,
   });
 
+  const [availableLocations, setAvailableLocations] = useState([]);
+
   const itemCategories = [
     "Vegetable",
     "Starch",
@@ -34,6 +36,21 @@ const AddIngredient = () => {
   ];
 
   const storageTypes = ["Dry", "Fridge", "Freezer"];
+
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/locations");
+        if (Array.isArray(response.data)) {
+          setAvailableLocations(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchLocations();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -51,7 +68,7 @@ const AddIngredient = () => {
         barcode: Date.now().toString(), // auto-generate barcode
         num_containers: parseInt(formData.num_containers, 10),
         units_per_container: parseFloat(formData.units_per_container),
-        expiration_date: formData.expiration_date || null, // allow empty
+        expiration_date: formData.expiration_date || null,
       };
 
       await axios.post("http://127.0.0.1:8000/add", dataToSend);
@@ -70,11 +87,22 @@ const AddIngredient = () => {
 
         <input name="ingredient_name" placeholder="Ingredient Name" value={formData.ingredient_name} onChange={handleChange} required className="border p-2" />
         <input name="num_containers" type="number" placeholder="Quantity" value={formData.num_containers} onChange={handleChange} required className="border p-2" />
+        <input name="container_type" placeholder="Container Type" value={formData.container_type} onChange={handleChange} className="border p-2" />
         <input name="units_per_container" type="number" placeholder="Units per Container" value={formData.units_per_container} onChange={handleChange} required className="border p-2" />
         <input name="unit" placeholder="Unit" value={formData.unit} onChange={handleChange} required className="border p-2" />
         <input name="expiration_date" type="date" placeholder="Expiration Date" value={formData.expiration_date} onChange={handleChange} className="border p-2" />
-        <input name="storage_location" placeholder="Storage Location" value={formData.storage_location} onChange={handleChange} className="border p-2" />
 
+        {/* ✅ Storage Location dropdown from Supabase */}
+        <select name="storage_location" value={formData.storage_location} onChange={handleChange} className="border p-2" required>
+          <option value="">Select Storage Location</option>
+          {availableLocations.map((loc) => (
+            <option key={loc.shelf_location} value={loc.shelf_location}>
+              {loc.shelf_location} ({loc.storage_type})
+            </option>
+          ))}
+        </select>
+
+        {/* ✅ Item Category dropdown */}
         <select name="item_category" value={formData.item_category} onChange={handleChange} className="border p-2 col-span-2" required>
           <option value="">Select Item Category</option>
           {itemCategories.map((cat) => (
@@ -82,6 +110,7 @@ const AddIngredient = () => {
           ))}
         </select>
 
+        {/* ✅ Storage Type dropdown */}
         <select name="storage_type" value={formData.storage_type} onChange={handleChange} className="border p-2 col-span-2" required>
           <option value="">Select Storage Type</option>
           {storageTypes.map((type) => (
@@ -89,7 +118,6 @@ const AddIngredient = () => {
           ))}
         </select>
 
-        <input name="container_type" placeholder="Container Type" value={formData.container_type} onChange={handleChange} className="border p-2" />
         <input name="brand" placeholder="Brand" value={formData.brand} onChange={handleChange} className="border p-2" />
 
         <label className="flex items-center col-span-2">

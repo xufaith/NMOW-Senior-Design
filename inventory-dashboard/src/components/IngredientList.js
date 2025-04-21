@@ -8,6 +8,7 @@ const IngredientList = ({ searchQuery }) => {
   const [filteredIngredients, setFilteredIngredients] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [selectedStorage, setSelectedStorage] = useState("All Storage");
+  const [sortOrder, setSortOrder] = useState("desc"); // New: sort by servings
 
   const fetchIngredients = async () => {
     try {
@@ -25,7 +26,7 @@ const IngredientList = ({ searchQuery }) => {
   };
 
   useEffect(() => {
-    fetchIngredients(); // Fetch data on mount
+    fetchIngredients(); // Fetch on mount
   }, []);
 
   useEffect(() => {
@@ -45,10 +46,20 @@ const IngredientList = ({ searchQuery }) => {
       );
     }
 
-    setFilteredIngredients(filtered);
-  }, [searchQuery, selectedCategory, selectedStorage, ingredients]);
+    // Sort by servings
+    filtered.sort((a, b) => {
+      const servingsA = a.num_containers * (a.units_per_container || 1);
+      const servingsB = b.num_containers * (b.units_per_container || 1);
+      return sortOrder === "asc" ? servingsA - servingsB : servingsB - servingsA;
+    });
 
-  // ✅ Calculate total servings (Rounded to integer)
+    setFilteredIngredients(filtered);
+  }, [searchQuery, selectedCategory, selectedStorage, ingredients, sortOrder]);
+
+  const toggleSortOrder = () => {
+    setSortOrder(prev => (prev === "asc" ? "desc" : "asc"));
+  };
+
   const totalServings = Math.round(
     filteredIngredients.reduce((sum, ing) => sum + ing.num_containers * (ing.units_per_container || 1), 0)
   );
@@ -70,15 +81,23 @@ const IngredientList = ({ searchQuery }) => {
           ))}
         </select>
 
-        {/* ✅ Vertically Centered Total Servings */}
         <span style={{
           fontWeight: "bold",
           fontSize: "15px",
-          marginRight: "auto", 
-          alignSelf: "center" // Vertically center
+          marginRight: "auto",
+          alignSelf: "center"
         }}>
           Total Servings: {totalServings}
         </span>
+
+        <button
+          onClick={toggleSortOrder}
+          className="export-btn"
+          style={{ minWidth: "130px", padding: "8px 16px" }}
+        >
+
+          Sort by Servings ({sortOrder === "asc" ? "Low → High" : "High → Low"})
+        </button>
       </div>
 
       {filteredIngredients.length > 0 ? (
