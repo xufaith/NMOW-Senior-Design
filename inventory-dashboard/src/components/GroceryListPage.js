@@ -7,7 +7,7 @@ const GroceryListPage = () => {
   useEffect(() => {
     const fetchGroceryList = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/grocery_list");
+        const response = await axios.get("https://nmow-app-33048e3a88a5.herokuapp.com/grocery_list");
         setGroceryList(response.data.grocery_list || []);
       } catch (error) {
         console.error("Error fetching grocery list:", error);

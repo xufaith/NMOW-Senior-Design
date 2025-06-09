@@ -5,7 +5,7 @@ const ExpirationPage = () => {
     const [expiringIngredients, setExpiringIngredients] = useState([]);
 
     useEffect(() => {
-        axios.get("http://127.0.0.1:8000/ingredients")
+        axios.get("https://nmow-app-33048e3a88a5.herokuapp.com/ingredients")
             .then((response) => {
                 const today = new Date();
                 const oneWeekOut = new Date();

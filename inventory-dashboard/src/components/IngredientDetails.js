@@ -12,7 +12,7 @@ const IngredientDetails = () => {
   useEffect(() => {
     const fetchIngredient = async () => {
       try {
-        const { data } = await axios.get(`http://127.0.0.1:8000/ingredient/${barcode}`);
+        const { data } = await axios.get(`https://nmow-app-33048e3a88a5.herokuapp.com/ingredient/${barcode}`);
         setFormData(data);
       } catch (error) {
         console.error("Error fetching ingredient:", error);
@@ -34,7 +34,7 @@ const IngredientDetails = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`http://127.0.0.1:8000/update-ingredient/${barcode}`, formData);
+      await axios.put(`https://nmow-app-33048e3a88a5.herokuapp.com/update-ingredient/${barcode}`, formData);
       alert("Ingredient updated successfully!");
       navigate("/");
     } catch (error) {
@@ -48,7 +48,7 @@ const IngredientDetails = () => {
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:8000/remove/${barcode}`);
+      await axios.delete(`https://nmow-app-33048e3a88a5.herokuapp.com/remove/${barcode}`);
       setSuccessMessage("✅ Ingredient successfully deleted.");
       setTimeout(() => navigate("/"), 2000); // Redirect after 2s
     } catch (error) {

@@ -89,7 +89,7 @@ const MenuSubstitutions = ({ setGroceryList }) => {
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const res = await axios.get("http://127.0.0.1:8000/ingredients");
+        const res = await axios.get("https://nmow-app-33048e3a88a5.herokuapp.com/ingredients");
         if (Array.isArray(res.data.ingredients)) {
           setIngredients(res.data.ingredients);
         }
@@ -159,7 +159,7 @@ const MenuSubstitutions = ({ setGroceryList }) => {
 
   const handleCheckFeasibility = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/check_feasibility", {
+      const res = await axios.post("https://nmow-app-33048e3a88a5.herokuapp.com/check_feasibility", {
         menu,
         meals_per_day: mealsPerDay,
       });
@@ -171,7 +171,7 @@ const MenuSubstitutions = ({ setGroceryList }) => {
 
   const handleSaveOutput = async () => {
     try {
-      const res = await axios.post("http://127.0.0.1:8000/finalize_menu", {
+      const res = await axios.post("https://nmow-app-33048e3a88a5.herokuapp.com/finalize_menu", {
         menu,
         meals_per_day: mealsPerDay,
         selected_substitutions: selectedSuggestions,

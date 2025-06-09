@@ -40,7 +40,7 @@ const AddIngredient = () => {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await axios.get("http://127.0.0.1:8000/locations");
+        const response = await axios.get("https://nmow-app-33048e3a88a5.herokuapp.com/locations");
         if (Array.isArray(response.data)) {
           setAvailableLocations(response.data);
         }
@@ -71,7 +71,7 @@ const AddIngredient = () => {
         expiration_date: formData.expiration_date || null,
       };
 
-      await axios.post("http://127.0.0.1:8000/add", dataToSend);
+      await axios.post("https://nmow-app-33048e3a88a5.herokuapp.com/add", dataToSend);
       alert("Ingredient added successfully!");
       navigate("/");
     } catch (error) {

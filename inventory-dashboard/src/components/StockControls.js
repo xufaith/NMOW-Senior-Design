@@ -9,7 +9,7 @@ const StockControls = ({ ingredient, setIngredients }) => {
     if (!numericAmount || numericAmount <= 0) return;
 
     try {
-      const url = `http://127.0.0.1:8000/${action}/${ingredient.barcode}`;
+      const url = `https://nmow-app-33048e3a88a5.herokuapp.com/${action}/${ingredient.barcode}`;
       const response = await axios.patch(url, { amount: numericAmount });
 
       if (response.status === 200) {

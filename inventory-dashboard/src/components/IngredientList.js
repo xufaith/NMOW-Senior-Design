@@ -12,7 +12,7 @@ const IngredientList = ({ searchQuery }) => {
 
   const fetchIngredients = async () => {
     try {
-      const response = await axios.get("http://127.0.0.1:8000/ingredients");
+      const response = await axios.get("https://nmow-app-33048e3a88a5.herokuapp.com/ingredients");
       if (response.data.ingredients && Array.isArray(response.data.ingredients)) {
         setIngredients(response.data.ingredients);
       } else {
